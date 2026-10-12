@@ -1,0 +1,735 @@
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudyPlanner — Інтелектуальний планувальник завдань</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-light: #e0e7ff;
+      --bg: #0f172a;
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --radius: 16px;
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.1) 0px, transparent 50%);
+      background-attachment: fixed;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      width: 100%;
+    }
+
+    /* HEADER */
+    header {
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--card-border);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(15, 23, 42, 0.75);
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo-icon {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, var(--primary), #818cf8);
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 800;
+      font-size: 1.25rem;
+      box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.4);
+    }
+
+    .logo-text h1 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .logo-text p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* STATS DASHBOARD */
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin: 2rem 0;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 1.25rem;
+      border-radius: var(--radius);
+      backdrop-filter: blur(16px);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: var(--transition);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      font-size: 1.3rem;
+    }
+
+    .stat-info h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .stat-info span {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* CONTROLS BAR */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      background: var(--card-bg);
+      padding: 1rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--card-border);
+    }
+
+    .search-filter {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      flex: 1;
+    }
+
+    .input-field, .select-field {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      padding: 0.65rem 1rem;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .input-field:focus, .select-field:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+    }
+
+    .btn {
+      background: var(--primary);
+      color: white;
+      padding: 0.65rem 1.25rem;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: var(--transition);
+    }
+
+    .btn:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+    }
+
+    /* TASK GRID */
+    .task-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 3rem;
+    }
+
+    .task-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      backdrop-filter: blur(16px);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .task-card:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .task-card.completed {
+      opacity: 0.65;
+    }
+
+    .task-card.completed .task-title {
+      text-decoration: line-through;
+    }
+
+    .task-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .task-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .badge {
+      font-size: 0.72rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 20px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .badge-subject {
+      background: rgba(79, 70, 229, 0.15);
+      color: #a5b4fc;
+      border: 1px solid rgba(79, 70, 229, 0.3);
+    }
+
+    .badge-priority-високий {
+      background: rgba(239, 68, 68, 0.15);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    .badge-priority-середній {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fde68a;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    .badge-priority-низький {
+      background: rgba(16, 185, 129, 0.15);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .task-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      line-height: 1.4;
+      margin-top: 0.25rem;
+    }
+
+    .task-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .task-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--card-border);
+      margin-top: auto;
+    }
+
+    .action-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: var(--transition);
+      padding: 0.35rem 0.6rem;
+      border-radius: 8px;
+    }
+
+    .action-btn:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .action-btn.delete:hover {
+      color: var(--danger);
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    /* EMPTY STATE */
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 4rem 1rem;
+      color: var(--text-muted);
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      display: none;
+      place-items: center;
+      z-index: 100;
+      padding: 1rem;
+    }
+
+    .modal-overlay.active {
+      display: grid;
+    }
+
+    .modal {
+      background: #1e293b;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      width: 100%;
+      max-width: 500px;
+      padding: 1.75rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-header h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+
+    /* FOOTER */
+    footer {
+      margin-top: auto;
+      border-top: 1px solid var(--card-border);
+      background: rgba(15, 23, 42, 0.95);
+      padding: 2.5rem 0 1.5rem;
+    }
+
+    .footer-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 1rem;
+    }
+
+    .footer-brand {
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: -0.01em;
+    }
+
+    .footer-copyright {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .footer-meta {
+      font-size: 0.75rem;
+      color: rgba(148, 163, 184, 0.7);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="container header-content">
+      <div class="logo-group">
+        <div class="logo-icon">SP</div>
+        <div class="logo-text">
+          <h1>StudyPlanner</h1>
+          <p>Система менеджменту навчального процесу</p>
+        </div>
+      </div>
+      <button class="btn" onclick="openModal()">
+        <span>+</span> Нове завдання
+      </button>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- СТАТИСТИКА -->
+    <section class="dashboard">
+      <div class="stat-card">
+        <div class="stat-icon" style="background: rgba(79, 70, 229, 0.15); color: #818cf8;">📋</div>
+        <div class="stat-info">
+          <h3 id="statTotal">0</h3>
+          <span>Всього завдань</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">⏳</div>
+        <div class="stat-info">
+          <h3 id="statPending">0</h3>
+          <span>В процесі</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">✅</div>
+        <div class="stat-info">
+          <h3 id="statCompleted">0</h3>
+          <span>Завершено</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ПАНЕЛЬ ФІЛЬТРІВ ТА ПОШУКУ -->
+    <section class="controls">
+      <div class="search-filter">
+        <input type="text" id="searchInput" class="input-field" placeholder="Пошук за назвою або предметом..." oninput="renderTasks()">
+        <select id="filterSubject" class="select-field" onchange="renderTasks()">
+          <option value="all">Усі предмети</option>
+        </select>
+        <select id="filterStatus" class="select-field" onchange="renderTasks()">
+          <option value="all">Усі статуси</option>
+          <option value="pending">У процесі</option>
+          <option value="completed">Виконано</option>
+        </select>
+        <select id="filterPriority" class="select-field" onchange="renderTasks()">
+          <option value="all">Усі пріоритети</option>
+          <option value="високий">Високий</option>
+          <option value="середній">Середній</option>
+          <option value="низький">Низький</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- СИСТЕМНА СІТКА КАРТОК ЗАВДАНЬ -->
+    <section id="tasksContainer" class="task-grid">
+      <!-- Картки генеруються динамічно через JS -->
+    </section>
+  </main>
+
+  <!-- МОДАЛЬНЕ ВІКНО ДОДАВАННЯ ЗАВДАННЯ -->
+  <div class="modal-overlay" id="taskModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Додати нове завдання</h2>
+        <button class="close-btn" onclick="closeModal()">&times;</button>
+      </div>
+      <form id="taskForm" onsubmit="handleAddTask(event)">
+        <div class="form-group">
+          <label for="taskTitle">Назва завдання *</label>
+          <input type="text" id="taskTitle" class="input-field" placeholder="напр., Лабораторна робота №2" required>
+        </div>
+        <div class="form-group">
+          <label for="taskSubject">Навчальна дисципліна *</label>
+          <input type="text" id="taskSubject" class="input-field" placeholder="напр., Комп'ютерні мережі" required>
+        </div>
+        <div class="form-group">
+          <label for="taskDueDate">Термін виконання (Дедлайн) *</label>
+          <input type="date" id="taskDueDate" class="input-field" required>
+        </div>
+        <div class="form-group">
+          <label for="taskPriority">Пріоритет</label>
+          <select id="taskPriority" class="select-field">
+            <option value="високий">Високий</option>
+            <option value="середній" selected>Середній</option>
+            <option value="низький">Низький</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn" style="background: rgba(255,255,255,0.08); color: var(--text);" onclick="closeModal()">Скасувати</button>
+          <button type="submit" class="btn">Зберегти завдання</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ОНОВЛЕНИЙ ТА ПОКРАЩЕНИЙ ФУТЕР -->
+  <footer>
+    <div class="container footer-inner">
+      <div class="footer-brand">StudyPlanner Modern Suite</div>
+      <p class="footer-copyright">
+        &copy; 2026 Максим Ковалишин. Усі права захищено.<br>
+        Увесь вміст та програмний код захищено законом про авторське право і суміжні права.
+      </p>
+      <div class="footer-meta">
+        Розроблено в межах навчальної практики &bull; Варіант №6: «StudyPlanner»
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Початкові дані за замовчуванням
+    const initialTasks = [
+      {
+        id: '1',
+        title: 'Аналіз вимог та специфікація ПЗ',
+        subject: 'Інженерія ПЗ',
+        dueDate: '2026-10-20',
+        priority: 'високий',
+        status: 'pending'
+      },
+      {
+        id: '2',
+        title: 'Налаштування віртуальної мережі у Cisco Packet Tracer',
+        subject: 'Компʼютерні мережі',
+        dueDate: '2026-10-25',
+        priority: 'середній',
+        status: 'completed'
+      },
+      {
+        id: '3',
+        title: 'Реалізація бази даних та ER-діаграми',
+        subject: 'Бази даних',
+        dueDate: '2026-11-02',
+        priority: 'високий',
+        status: 'pending'
+      }
+    ];
+
+    let tasks = JSON.parse(localStorage.getItem('study_tasks')) || initialTasks;
+
+    function saveTasks() {
+      localStorage.setItem('study_tasks', JSON.stringify(tasks));
+      updateSubjectFilter();
+      updateDashboard();
+    }
+
+    function updateDashboard() {
+      const total = tasks.length;
+      const completed = tasks.filter(t => t.status === 'completed').length;
+      const pending = total - completed;
+
+      document.getElementById('statTotal').innerText = total;
+      document.getElementById('statCompleted').innerText = completed;
+      document.getElementById('statPending').innerText = pending;
+    }
+
+    function updateSubjectFilter() {
+      const select = document.getElementById('filterSubject');
+      const currentVal = select.value;
+      const subjects = Array.from(new Set(tasks.map(t => t.subject)));
+
+      select.innerHTML = '<option value="all">Усі предмети</option>';
+      subjects.forEach(subj => {
+        const opt = document.createElement('option');
+        opt.value = subj;
+        opt.textContent = subj;
+        select.appendChild(opt);
+      });
+      select.value = subjects.includes(currentVal) ? currentVal : 'all';
+    }
+
+    function renderTasks() {
+      const container = document.getElementById('tasksContainer');
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const filterSubject = document.getElementById('filterSubject').value;
+      const filterStatus = document.getElementById('filterStatus').value;
+      const filterPriority = document.getElementById('filterPriority').value;
+
+      const filtered = tasks.filter(t => {
+        const matchesSearch = t.title.toLowerCase().includes(search) || t.subject.toLowerCase().includes(search);
+        const matchesSubject = filterSubject === 'all' || t.subject === filterSubject;
+        const matchesStatus = filterStatus === 'all' || t.status === filterStatus;
+        const matchesPriority = filterPriority === 'all' || t.priority === filterPriority;
+        return matchesSearch && matchesSubject && matchesStatus && matchesPriority;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <p style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔍</p>
+            <h3>Завдань не знайдено</h3>
+            <p>Спробуйте змінити фільтри або додати нове навчальне завдання.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(t => `
+        <div class="task-card ${t.status === 'completed' ? 'completed' : ''}">
+          <div class="task-header">
+            <div class="task-badges">
+              <span class="badge badge-subject">${escapeHtml(t.subject)}</span>
+              <span class="badge badge-priority-${t.priority}">${t.priority}</span>
+            </div>
+          </div>
+          <div>
+            <h4 class="task-title">${escapeHtml(t.title)}</h4>
+          </div>
+          <div class="task-meta">
+            <span>📅 Термін: <strong>${formatDate(t.dueDate)}</strong></span>
+          </div>
+          <div class="task-actions">
+            <button class="action-btn" onclick="toggleTaskStatus('${t.id}')">
+              ${t.status === 'completed' ? '↩️ Відновити' : '✅ Виконано'}
+            </button>
+            <button class="action-btn delete" onclick="deleteTask('${t.id}')">
+              🗑️ Видалити
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openModal() {
+      document.getElementById('taskModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('taskModal').classList.remove('active');
+      document.getElementById('taskForm').reset();
+    }
+
+    function handleAddTask(e) {
+      e.preventDefault();
+      const newTask = {
+        id: Date.now().toString(),
+        title: document.getElementById('taskTitle').value.trim(),
+        subject: document.getElementById('taskSubject').value.trim(),
+        dueDate: document.getElementById('taskDueDate').value,
+        priority: document.getElementById('taskPriority').value,
+        status: 'pending'
+      };
+
+      tasks.unshift(newTask);
+      saveTasks();
+      renderTasks();
+      closeModal();
+    }
+
+    function toggleTaskStatus(id) {
+      tasks = tasks.map(t => {
+        if (t.id === id) {
+          return { ...t, status: t.status === 'completed' ? 'pending' : 'completed' };
+        }
+        return t;
+      });
+      saveTasks();
+      renderTasks();
+    }
+
+    function deleteTask(id) {
+      if (confirm('Ви впевнені, що бажаєте видалити це навчальне завдання?')) {
+        tasks = tasks.filter(t => t.id !== id);
+        saveTasks();
+        renderTasks();
+      }
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return 'Без терміну';
+      const parts = dateStr.split('-');
+      if (parts.length === 3) return `${parts[2]}.${parts[1]}.${parts[0]}`;
+      return dateStr;
+    }
+
+    function escapeHtml(string) {
+      const div = document.createElement('div');
+      div.innerText = string;
+      return div.innerHTML;
+    }
+
+    // Ініціалізація під час завантаження
+    window.addEventListener('DOMContentLoaded', () => {
+      updateSubjectFilter();
+      updateDashboard();
+      renderTasks();
+    });
+  </script>
+</body>
+</html>
